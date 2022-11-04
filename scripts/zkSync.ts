@@ -5,9 +5,10 @@ import * as zksync from 'zksync-web3'
 dotenv.config()
 
 const PRIVATE_KEY = process.env.PRIVATE_KEY || ''
-const AMOUNT = process.env.AMOUNT || '0.001'
+const AMOUNT = process.env.AMOUNT || '0.004'
 const TO = process.env.TO || ''
-const TX_COUNT = process.env.TX_COUNT || '61'
+const TX_COUNT = process.env.TX_COUNT || '72'
+const TOKEN = process.env.TOKEN || ''
 
 interface TransferInfo {
   to: string
@@ -33,15 +34,31 @@ async function main() {
   console.log('>>>>>After transfer', ethers.utils.formatEther(afterBalanceTx))
 }
 
-async function transfer(from: zksync.Wallet, to: string) {
-  const amount = ethers.utils.parseEther(AMOUNT)
+function generateAmount(maxAmount: string) {
+  let amount = Math.floor(Math.random() * (10 - 1) + 1) / 1000
 
-  const tx = await from.transfer({
+  if (parseFloat(amount.toString()) > parseFloat(maxAmount)) {
+    amount = generateAmount(maxAmount)
+  }
+  return amount
+}
+
+async function transfer(from: zksync.Wallet, to: string) {
+  const transferAmount = generateAmount(AMOUNT)
+  const amount = ethers.utils.parseEther(transferAmount.toString())
+
+  const txDetails: TransferInfo = {
     to,
     amount,
-  })
+  }
+
+  if (TOKEN) {
+    txDetails.token = TOKEN
+  }
+
+  const tx = await from.transfer(txDetails)
   const receipt = await tx.wait()
-  console.log('>>>>>>receipt,', to, receipt.transactionHash)
+  console.log('>>>>>>receipt,', to, transferAmount, receipt.transactionHash)
 }
 
 main()
