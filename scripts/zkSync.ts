@@ -35,7 +35,10 @@ async function main() {
 }
 
 function generateAmount(maxAmount: string) {
-  let amount = Math.floor(Math.random() * (10 - 1) + 1) / 1000
+  const randomNumber = Math.floor(Math.random() * (10 - 1) + 1)
+
+  // Transfer token with integer value, otherwise transfer ETH with decimal value
+  let amount = TOKEN ? randomNumber : randomNumber / 1000
 
   if (parseFloat(amount.toString()) > parseFloat(maxAmount)) {
     amount = generateAmount(maxAmount)
