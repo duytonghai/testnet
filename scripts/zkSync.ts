@@ -23,6 +23,8 @@ async function main() {
 
   const ethProvider = ethers.getDefaultProvider(NETWORK_PROVIDER)
 
+  console.log('>>>>NETWORK_PROVIDER', NETWORK_PROVIDER)
+
   const syncWallet = new zksync.Wallet(PRIVATE_KEY, syncProvider, ethProvider)
 
   const balanceTx = await syncWallet.getBalance()

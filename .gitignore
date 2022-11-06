@@ -10,6 +10,7 @@ cache
 artifacts
 
 keys.txt
+keys_firefox.txt
 
 yarn-error.log
 
