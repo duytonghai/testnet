@@ -9,6 +9,8 @@ const AMOUNT = process.env.AMOUNT || '0.004'
 const TO = process.env.TO || ''
 const TX_COUNT = process.env.TX_COUNT || '72'
 const TOKEN = process.env.TOKEN || ''
+const DECIMAL = process.env.DECIMAL || '1'
+const NETWORK_PROVIDER =  process.env.NETWORK_PROVIDER || 'goerli'
 
 interface TransferInfo {
   to: string
@@ -19,7 +21,7 @@ interface TransferInfo {
 async function main() {
   const syncProvider = new zksync.Provider('https://zksync2-testnet.zksync.dev')
 
-  const ethProvider = ethers.getDefaultProvider('goerli')
+  const ethProvider = ethers.getDefaultProvider(NETWORK_PROVIDER)
 
   const syncWallet = new zksync.Wallet(PRIVATE_KEY, syncProvider, ethProvider)
 
@@ -38,7 +40,7 @@ function generateAmount(maxAmount: string) {
   const randomNumber = Math.floor(Math.random() * (10 - 1) + 1)
 
   // Transfer token with integer value, otherwise transfer ETH with decimal value
-  let amount = TOKEN ? randomNumber : randomNumber / 1000
+  let amount = TOKEN ? randomNumber / parseInt(DECIMAL) : randomNumber / 1000
 
   if (parseFloat(amount.toString()) > parseFloat(maxAmount)) {
     amount = generateAmount(maxAmount)
